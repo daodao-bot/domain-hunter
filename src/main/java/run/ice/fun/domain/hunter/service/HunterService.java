@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 import run.ice.fun.domain.hunter.config.AppConfig;
-import run.ice.fun.domain.hunter.constant.AppConstant;
+import run.ice.fun.domain.hunter.constant.DomainConstant;
 import run.ice.fun.domain.hunter.entity.Domain;
-import run.ice.fun.domain.hunter.error.AppError;
+import run.ice.fun.domain.hunter.error.HunterError;
 import run.ice.fun.domain.hunter.model.DomainSniper;
 import run.ice.fun.domain.hunter.model.DomainTarget;
 import run.ice.fun.domain.hunter.repository.DomainRepository;
-import run.ice.lib.core.error.CoreException;
+import run.ice.lib.core.error.AppException;
 
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -42,9 +42,9 @@ public class HunterService {
     public void domainHunter(DomainTarget param) {
         Integer bit = param.getBit();
         String tld = param.getTld();
-        String[] tlds = AppConstant.TLDS;
+        String[] tlds = DomainConstant.TLDS;
         if (null != tld && !List.of(tlds).contains(tld)) {
-            throw new CoreException(AppError.TLD_ERROR, tld);
+            throw new AppException(HunterError.TLD_ERROR, tld);
         }
         switch (bit) {
             case 1:
@@ -60,22 +60,22 @@ public class HunterService {
                 bit4(tld);
                 break;
             default:
-                throw new CoreException(AppError.BIT_ERROR, String.valueOf(bit));
+                throw new AppException(HunterError.BIT_ERROR, String.valueOf(bit));
         }
     }
 
     public void domainSniper(DomainSniper param) {
         String sld = param.getSld();
         String tld = param.getTld();
-        String[] tlds = AppConstant.TLDS;
+        String[] tlds = DomainConstant.TLDS;
         if (null != tld && !List.of(tlds).contains(tld)) {
-            throw new CoreException(AppError.TLD_ERROR, tld);
+            throw new AppException(HunterError.TLD_ERROR, tld);
         }
         toCheck(sld, tld);
     }
 
     public void bit1(String tld) {
-        char[] chars = AppConstant.LETTERS;
+        char[] chars = DomainConstant.LETTERS;
         for (char c : chars) {
             String sld = String.valueOf(c);
             toCheck(sld, tld);
@@ -83,7 +83,7 @@ public class HunterService {
     }
 
     public void bit2(String tld) {
-        char[] chars = AppConstant.LETTERS;
+        char[] chars = DomainConstant.LETTERS;
         for (char c1 : chars) {
             for (char c2 : chars) {
                 String sld = String.format("%s%s", c1, c2);
@@ -93,7 +93,7 @@ public class HunterService {
     }
 
     public void bit3(String tld) {
-        char[] chars = AppConstant.LETTERS;
+        char[] chars = DomainConstant.LETTERS;
         for (char c1 : chars) {
             for (char c2 : chars) {
                 for (char c3 : chars) {
@@ -105,7 +105,7 @@ public class HunterService {
     }
 
     public void bit4(String tld) {
-        char[] chars = AppConstant.LETTERS;
+        char[] chars = DomainConstant.LETTERS;
         for (char c1 : chars) {
             for (char c2 : chars) {
                 for (char c3 : chars) {
@@ -223,7 +223,7 @@ public class HunterService {
 
     public void doCount(String sld, String tld) {
         int length = sld.length();
-        int total = (int) Math.pow(AppConstant.LETTERS.length, length);
+        int total = (int) Math.pow(DomainConstant.LETTERS.length, length);
         Object recordCount = jdbcClient.sql("SELECT COUNT(*) FROM `domain_hunter`.`domain` WHERE `tld` = :tld AND LENGTH(`sld`) = :length")
                 .param("tld", tld)
                 .param("length", length)

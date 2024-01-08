@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import run.ice.lib.core.error.CoreError;
-import run.ice.lib.core.error.CoreException;
+import run.ice.lib.core.error.AppError;
+import run.ice.lib.core.error.AppException;
 import run.ice.lib.core.model.Response;
 
 import java.util.ArrayList;
@@ -35,10 +35,10 @@ public class AppExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Response<?> handleException(Exception e) {
         log.error(e.getMessage(), e);
-        if (e instanceof CoreException exception) {
+        if (e instanceof AppException exception) {
             return new Response<>(exception);
         }
-        return new Response<>(new CoreException(e));
+        return new Response<>(new AppException(e));
     }
 
     /**
@@ -61,7 +61,7 @@ public class AppExceptionHandler {
                 messages.add(objectError.toString());
             }
         }
-        return new Response<>(CoreError.ERROR.code, String.join(";", messages));
+        return new Response<>(AppError.PARAM_ERROR.code, String.join(";", messages));
     }
 
 }

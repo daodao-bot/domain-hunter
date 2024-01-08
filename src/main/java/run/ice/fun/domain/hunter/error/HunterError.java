@@ -6,7 +6,7 @@ import run.ice.lib.core.error.ErrorEnum;
 
 @Getter
 @AllArgsConstructor
-public enum AppError implements ErrorEnum {
+public enum HunterError implements ErrorEnum {
 
     ERROR("100000", "ERROR"),
     DOMAIN_NOT_EXIST("100001", "域名不存在"),

@@ -8,15 +8,15 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import run.ice.fun.domain.hunter.constant.AppConstant;
+import run.ice.fun.domain.hunter.constant.DomainConstant;
 import run.ice.fun.domain.hunter.entity.Domain;
-import run.ice.fun.domain.hunter.error.AppError;
+import run.ice.fun.domain.hunter.error.HunterError;
 import run.ice.fun.domain.hunter.model.DomainData;
 import run.ice.fun.domain.hunter.model.DomainSearch;
 import run.ice.fun.domain.hunter.model.DomainSelect;
 import run.ice.fun.domain.hunter.model.DomainUpsert;
 import run.ice.fun.domain.hunter.repository.DomainRepository;
-import run.ice.lib.core.error.CoreException;
+import run.ice.lib.core.error.AppException;
 import run.ice.lib.core.model.PageData;
 import run.ice.lib.core.model.PageParam;
 import run.ice.lib.util.bean.BeanUtil;
@@ -40,7 +40,7 @@ public class DomainService {
     public DomainData domainSelect(DomainSelect param) {
         Long id = param.getId();
         Domain entity = domainRepository.findById(id)
-                .orElseThrow(() -> new CoreException(AppError.DOMAIN_NOT_EXIST, String.valueOf(id)));
+                .orElseThrow(() -> new AppException(HunterError.DOMAIN_NOT_EXIST, String.valueOf(id)));
         DomainData data = new DomainData();
         BeanUtils.copyProperties(entity, data);
         return data;
@@ -50,9 +50,9 @@ public class DomainService {
         Long id = param.getId();
         String sld = param.getSld();
         String tld = param.getTld();
-        String[] tlds = AppConstant.TLDS;
+        String[] tlds = DomainConstant.TLDS;
         if (null != tld && !List.of(tlds).contains(tld)) {
-            throw new CoreException(AppError.TLD_ERROR, tld);
+            throw new AppException(HunterError.TLD_ERROR, tld);
         }
         Domain entity = new Domain();
         if (id == null) {
@@ -61,13 +61,13 @@ public class DomainService {
             Optional<Domain> optional = domainRepository.findOne(Example.of(entity));
             if (optional.isPresent()) {
                 entity = optional.get();
-                throw new CoreException(AppError.DOMAIN_ALREADY_EXIST, entity.toJson());
+                throw new AppException(HunterError.DOMAIN_ALREADY_EXIST, entity.toJson());
             }
             entity.setCreateTime(LocalDateTime.now());
         } else {
             Optional<Domain> optional = domainRepository.findById(id);
             if (optional.isEmpty()) {
-                throw new CoreException(AppError.DOMAIN_NOT_EXIST, String.valueOf(id));
+                throw new AppException(HunterError.DOMAIN_NOT_EXIST, String.valueOf(id));
             }
             Domain model = new Domain();
             model.setSld(sld);
@@ -76,7 +76,7 @@ public class DomainService {
             if (o.isPresent()) {
                 model = o.get();
                 if (!model.getId().equals(id)) {
-                    throw new CoreException(AppError.DOMAIN_ALREADY_EXIST, model.toJson());
+                    throw new AppException(HunterError.DOMAIN_ALREADY_EXIST, model.toJson());
                 }
             }
         }
@@ -94,9 +94,9 @@ public class DomainService {
         DomainSearch param = pageParam.getParam();
         String sld = param.getSld();
         String tld = param.getTld();
-        String[] tlds = AppConstant.TLDS;
+        String[] tlds = DomainConstant.TLDS;
         if (null != tld && !List.of(tlds).contains(tld)) {
-            throw new CoreException(AppError.TLD_ERROR, tld);
+            throw new AppException(HunterError.TLD_ERROR, tld);
         }
         Boolean avail = param.getAvail();
         Long priceLower = param.getPriceLower();

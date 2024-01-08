@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import run.ice.fun.domain.hunter.DomainHunterApplicationTest;
-import run.ice.fun.domain.hunter.constant.AppConstant;
+import run.ice.fun.domain.hunter.constant.ApiConstant;
 import run.ice.fun.domain.hunter.model.DomainSniper;
 import run.ice.fun.domain.hunter.model.DomainTarget;
-import run.ice.lib.core.error.CoreError;
+import run.ice.lib.core.error.AppError;
 import run.ice.lib.core.model.Ok;
 import run.ice.lib.core.model.Request;
 import run.ice.lib.core.model.Response;
@@ -19,7 +19,7 @@ class HunterControllerTest extends DomainHunterApplicationTest {
     @Test
     void domainHunter() {
 
-        String api = AppConstant.DOMAIN_HUNTER;
+        String api = ApiConstant.DOMAIN_HUNTER;
 
         DomainTarget param = new DomainTarget();
         param.setBit(1);
@@ -31,14 +31,14 @@ class HunterControllerTest extends DomainHunterApplicationTest {
         });
 
         Assertions.assertNotNull(response);
-        Assertions.assertEquals(CoreError.OK.code, response.getCode());
+        Assertions.assertEquals(AppError.OK.code, response.getCode());
 
     }
 
     @Test
     void domainSniper() {
 
-        String api = AppConstant.DOMAIN_SNIPER;
+        String api = ApiConstant.DOMAIN_SNIPER;
 
         DomainSniper param = new DomainSniper();
         param.setSld("ice");
@@ -50,7 +50,7 @@ class HunterControllerTest extends DomainHunterApplicationTest {
         });
 
         Assertions.assertNotNull(response);
-        Assertions.assertEquals(CoreError.OK.code, response.getCode());
+        Assertions.assertEquals(AppError.OK.code, response.getCode());
 
     }
 

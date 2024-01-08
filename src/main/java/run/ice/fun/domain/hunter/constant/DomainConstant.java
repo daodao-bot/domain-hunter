@@ -3,14 +3,7 @@ package run.ice.fun.domain.hunter.constant;
 /**
  * @author DaoDao
  */
-public class AppConstant {
-
-    public static final String DOMAIN_SELECT = "domain-select";
-    public static final String DOMAIN_UPSERT = "domain-upsert";
-    public static final String DOMAIN_SEARCH = "domain-search";
-
-    public static final String DOMAIN_HUNTER = "domain-hunter";
-    public static final String DOMAIN_SNIPER = "domain-sniper";
+public class DomainConstant {
 
     public static final char[] LETTERS = {
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'

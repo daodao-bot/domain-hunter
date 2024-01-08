@@ -5,12 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import run.ice.fun.domain.hunter.DomainHunterApplicationTest;
-import run.ice.fun.domain.hunter.constant.AppConstant;
+import run.ice.fun.domain.hunter.constant.ApiConstant;
 import run.ice.fun.domain.hunter.model.DomainData;
 import run.ice.fun.domain.hunter.model.DomainSearch;
 import run.ice.fun.domain.hunter.model.DomainSelect;
 import run.ice.fun.domain.hunter.model.DomainUpsert;
-import run.ice.lib.core.error.CoreError;
+import run.ice.lib.core.error.AppError;
 import run.ice.lib.core.model.PageData;
 import run.ice.lib.core.model.PageParam;
 import run.ice.lib.core.model.Request;
@@ -24,7 +24,7 @@ class DomainControllerTest extends DomainHunterApplicationTest {
     @Test
     void domainSelect() {
 
-        String api = AppConstant.DOMAIN_SELECT;
+        String api = ApiConstant.DOMAIN_SELECT;
 
         DomainSelect param = new DomainSelect();
         param.setId(1L);
@@ -35,7 +35,7 @@ class DomainControllerTest extends DomainHunterApplicationTest {
         });
 
         Assertions.assertNotNull(response);
-        Assertions.assertEquals(CoreError.OK.code, response.getCode());
+        Assertions.assertEquals(AppError.OK.code, response.getCode());
 
         DomainData data = response.getData();
 
@@ -47,7 +47,7 @@ class DomainControllerTest extends DomainHunterApplicationTest {
     @Test
     void domainUpsert() {
 
-        String api = AppConstant.DOMAIN_UPSERT;
+        String api = ApiConstant.DOMAIN_UPSERT;
 
         DomainUpsert param = new DomainUpsert();
         param.setId(1L);
@@ -61,7 +61,7 @@ class DomainControllerTest extends DomainHunterApplicationTest {
         });
 
         Assertions.assertNotNull(response);
-        Assertions.assertEquals(CoreError.OK.code, response.getCode());
+        Assertions.assertEquals(AppError.OK.code, response.getCode());
 
         DomainData data = response.getData();
 
@@ -73,7 +73,7 @@ class DomainControllerTest extends DomainHunterApplicationTest {
     @Test
     void domainSearch() {
 
-        String api = AppConstant.DOMAIN_SEARCH;
+        String api = ApiConstant.DOMAIN_SEARCH;
 
         DomainSearch param = new DomainSearch();
         param.setSld("ice");
@@ -87,7 +87,7 @@ class DomainControllerTest extends DomainHunterApplicationTest {
         });
 
         Assertions.assertNotNull(response);
-        Assertions.assertEquals(CoreError.OK.code, response.getCode());
+        Assertions.assertEquals(AppError.OK.code, response.getCode());
 
         PageData<DomainData> pageData = response.getData();
 
