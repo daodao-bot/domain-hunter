@@ -17,12 +17,12 @@ import run.ice.lib.core.serialize.Serializer;
 public class DomainSearch implements Serializer {
 
     @Schema(title = "二级域名", description = "ice.run 中的 ice", example = "ice")
-    @Size(min = 1, max = 32)
+    @Size(min = 1, max = 16)
     @Pattern(regexp = "^[a-z0-9]+$")
     private String sld;
 
     @Schema(title = "顶级域名", description = "ice.run 中的 run", example = "run")
-    @Size(min = 1, max = 16)
+    @Size(min = 1, max = 8)
     @Pattern(regexp = "^[a-z0-9]+$")
     private String tld;
 

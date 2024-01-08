@@ -9,8 +9,8 @@ USE `domain_hunter`;
 CREATE TABLE `domain_hunter`.`domain`
 (
     `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `sld`         VARCHAR(32)     NOT NULL COMMENT '二级域名',
-    `tld`         VARCHAR(16)     NOT NULL COMMENT '顶级域名',
+    `sld`         VARCHAR(16)     NOT NULL COMMENT '二级域名',
+    `tld`         VARCHAR(8)     NOT NULL COMMENT '顶级域名',
     `avail`       BOOLEAN         NULL     DEFAULT NULL COMMENT '是否可用',
     `price`       INT UNSIGNED    NULL     DEFAULT NULL COMMENT '价格',
     `create_time` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
