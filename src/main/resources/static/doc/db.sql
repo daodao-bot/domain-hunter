@@ -27,3 +27,9 @@ CREATE TABLE `domain_hunter`.`domain`
 # 插入测试数据
 INSERT INTO `domain_hunter`.`domain` (`id`, `sld`, `tld`)
 VALUES (1, 'ice', 'run');
+
+CREATE USER 'domain_hunter'@'%' IDENTIFIED BY 'domain_hunter';
+
+GRANT ALL PRIVILEGES ON domain_hunter.* TO 'domain_hunter'@'%';
+
+FLUSH PRIVILEGES;
