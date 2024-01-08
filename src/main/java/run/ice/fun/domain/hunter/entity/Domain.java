@@ -5,9 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.query.spi.QueryParameterBindings;
-import org.hibernate.type.descriptor.jdbc.BasicBinder;
-import org.springframework.data.annotation.CreatedDate;
 import run.ice.lib.core.serialize.Serializer;
 
 import java.time.LocalDateTime;

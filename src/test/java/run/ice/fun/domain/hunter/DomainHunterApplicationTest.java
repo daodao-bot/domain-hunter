@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
-import run.ice.lib.core.constant.CoreConstant;
+import run.ice.lib.core.constant.AppConstant;
 import run.ice.lib.core.model.Request;
 import run.ice.lib.core.model.Response;
 
@@ -48,7 +48,7 @@ public class DomainHunterApplicationTest {
 
     @BeforeEach
     void setUp() {
-        uri = "/" + CoreConstant.API + "/";
+        uri = "/" + AppConstant.API + "/";
         httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
     }
