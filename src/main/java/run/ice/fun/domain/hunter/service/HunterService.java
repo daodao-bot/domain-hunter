@@ -2,8 +2,10 @@ package run.ice.fun.domain.hunter.service;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Example;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
@@ -13,12 +15,15 @@ import run.ice.fun.domain.hunter.config.AppConfig;
 import run.ice.fun.domain.hunter.constant.DomainConstant;
 import run.ice.fun.domain.hunter.entity.Domain;
 import run.ice.fun.domain.hunter.error.HunterError;
+import run.ice.fun.domain.hunter.message.MessageProducer;
+import run.ice.fun.domain.hunter.model.DomainData;
 import run.ice.fun.domain.hunter.model.DomainSniper;
 import run.ice.fun.domain.hunter.model.DomainTarget;
 import run.ice.fun.domain.hunter.repository.DomainRepository;
 import run.ice.lib.core.error.AppException;
 
 import java.net.URI;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -38,6 +43,12 @@ public class HunterService {
 
     @Resource
     private JdbcClient jdbcClient;
+
+    @Resource
+    private MessageProducer messageProducer;
+
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
     public void domainHunter(DomainTarget param) {
         Integer bit = param.getBit();
@@ -64,14 +75,22 @@ public class HunterService {
         }
     }
 
-    public void domainSniper(DomainSniper param) {
+    public DomainData domainSniper(DomainSniper param) {
         String sld = param.getSld();
         String tld = param.getTld();
         String[] tlds = DomainConstant.TLDS;
         if (null != tld && !List.of(tlds).contains(tld)) {
             throw new AppException(HunterError.TLD_ERROR, tld);
         }
-        toCheck(sld, tld);
+        doCheck(sld, tld);
+        Domain domain = new Domain();
+        domain.setSld(sld);
+        domain.setTld(tld);
+        domain = domainRepository.findOne(Example.of(domain))
+                .orElseThrow(() -> new AppException(HunterError.DOMAIN_NOT_EXIST, sld + "." + tld));
+        DomainData data = new DomainData();
+        BeanUtils.copyProperties(domain, data);
+        return data;
     }
 
     public void bit1(String tld) {
@@ -119,7 +138,17 @@ public class HunterService {
     }
 
     public void toCheck(String sld, String tld) {
-        Thread.ofVirtual().start(() -> doCheck(sld, tld));
+        String key = cacheKey(sld, tld);
+        Object o = redisTemplate.opsForValue().get(key);
+        if (null != o) {
+            Domain domain = (Domain) o;
+            Boolean valid = domain.getValid();
+            if (valid) {
+                return;
+            }
+        }
+        // Thread.ofVirtual().start(() -> doCheck(sld, tld));
+        messageProducer.domainHunter(sld + "." + tld);
     }
 
     @SuppressWarnings("unchecked")
@@ -175,7 +204,7 @@ public class HunterService {
                 domain.setPrice(money);
                 domain.setValid(Boolean.TRUE);
                 domain.setUpdateTime(LocalDateTime.now());
-                domainRepository.save(domain);
+                domain = domainRepository.save(domain);
             } else {
                 log.error("{}.{} check error : {}", sld, tld, resultMap);
             }
@@ -195,9 +224,14 @@ public class HunterService {
             }
             domain.setValid(Boolean.TRUE);
             domain.setUpdateTime(LocalDateTime.now());
-            domainRepository.save(domain);
+            domain = domainRepository.save(domain);
         }
+
+        String key = cacheKey(sld, tld);
+        redisTemplate.opsForValue().set(key, domain, Duration.ofDays(30L));
+
         doCount(sld, tld);
+
     }
 
     public LinkedHashMap<String, ?> check(String sld, String tld) {
@@ -221,7 +255,7 @@ public class HunterService {
         return result;
     }
 
-    public void doCount(String sld, String tld) {
+    private void doCount(String sld, String tld) {
         int length = sld.length();
         int total = (int) Math.pow(DomainConstant.LETTERS.length, length);
         Object recordCount = jdbcClient.sql("SELECT COUNT(*) FROM `domain_hunter`.`domain` WHERE `tld` = :tld AND LENGTH(`sld`) = :length")
@@ -237,6 +271,10 @@ public class HunterService {
                 .singleValue();
         Long done = (Long) doneCount;
         log.info("{}.{} : {} / {} / {}", sld, tld, done, record, total);
+    }
+
+    private String cacheKey(String sld, String tld) {
+        return String.format("domain:%s.%s", sld, tld);
     }
 
 }

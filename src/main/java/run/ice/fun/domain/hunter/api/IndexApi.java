@@ -9,7 +9,7 @@ import org.springframework.web.service.annotation.HttpExchange;
 @HttpExchange(url = "")
 public interface IndexApi {
 
-    @Operation(summary = "index", description = "")
+    @Operation(summary = "index", description = "index")
     @GetExchange(url = "")
     String index();
 

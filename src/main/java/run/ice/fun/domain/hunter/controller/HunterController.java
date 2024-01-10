@@ -3,6 +3,7 @@ package run.ice.fun.domain.hunter.controller;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.RestController;
 import run.ice.fun.domain.hunter.api.HunterApi;
+import run.ice.fun.domain.hunter.model.DomainData;
 import run.ice.fun.domain.hunter.model.DomainSniper;
 import run.ice.fun.domain.hunter.model.DomainTarget;
 import run.ice.fun.domain.hunter.service.HunterService;
@@ -23,9 +24,9 @@ public class HunterController implements HunterApi {
     }
 
     @Override
-    public Response<Ok> domainSniper(Request<DomainSniper> request) {
-        hunterService.domainSniper(request.getParam());
-        return Response.ok();
+    public Response<DomainData> domainSniper(Request<DomainSniper> request) {
+        DomainData data = hunterService.domainSniper(request.getParam());
+        return new Response<>(data);
     }
 
 }

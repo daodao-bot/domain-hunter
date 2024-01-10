@@ -1,9 +1,8 @@
-
 CREATE DATABASE IF NOT EXISTS `domain_hunter` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 
 USE `domain_hunter`;
 
-CREATE TABLE `domain_hunter`.`domain`
+CREATE TABLE IF NOT EXISTS `domain_hunter`.`domain`
 (
     `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
     `sld`         VARCHAR(16)     NOT NULL COMMENT '二级域名',
@@ -23,9 +22,3 @@ CREATE TABLE `domain_hunter`.`domain`
 
 INSERT INTO `domain_hunter`.`domain` (`id`, `sld`, `tld`)
 VALUES (1, 'ice', 'run');
-
-CREATE USER 'domain_hunter'@'%' IDENTIFIED BY 'domain_hunter';
-
-GRANT ALL PRIVILEGES ON domain_hunter.* TO 'domain_hunter'@'%';
-
-FLUSH PRIVILEGES;
