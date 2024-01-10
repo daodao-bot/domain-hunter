@@ -34,6 +34,8 @@ docker run -d \
 
 参考 src/main/resources/static/doc/mysql.sql
 
+---
+
 ### redis
 
 ```shell
@@ -44,6 +46,8 @@ docker run -d \
   -v /data/docker/redis/data:/data \
   redis:latest
 ```
+
+---
 
 ### rabbitmq
 
@@ -98,11 +102,11 @@ OpenAPI 接口文档地址： /doc.html
 ```mysql
 SELECT *
 FROM `domain_hunter`.`domain`
-WHERE `tld` = 'com'
+WHERE `valid` = 1
+  AND `tld` = 'com'
   AND LENGTH(`sld`) = 3
   AND `avail` = 1
   AND `price` IS NOT NULL
-  AND `valid` = 1
 ORDER BY `price` ASC
 LIMIT 10;
 ```
