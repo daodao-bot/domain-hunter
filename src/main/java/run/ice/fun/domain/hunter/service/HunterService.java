@@ -201,28 +201,23 @@ public class HunterService {
                 LinkedHashMap<String, ?> price = o.get();
                 Long money = (Long) price.get("money");
                 domain.setPrice(money);
-                domain.setValid(Boolean.TRUE);
             } else {
                 log.error("{}.{} check error : {}", sld, tld, resultMap);
-                domain.setValid(Boolean.FALSE);
             }
         } else { // 不可用
             domain.setAvail(Boolean.FALSE);
             LinkedHashMap<String, ?> saleDetail = (LinkedHashMap<String, ?>) module.get("saleDetail");
             if (null != saleDetail) {
-                domain.setValid(Boolean.TRUE);
                 Integer productType = (Integer) saleDetail.get("productType");
                 String price = (String) saleDetail.get("price");
                 if (null != productType && productType == 2 && null != price && !price.isEmpty()) { // 2 一口价
                     Long money = Long.valueOf(price.replaceAll(",", ""));
                     domain.setPrice(money);
                 }
-            } else {
-                log.error("{}.{} check error : {}", sld, tld, resultMap);
-                domain.setValid(Boolean.FALSE);
             }
         }
         domain.setUpdateTime(LocalDateTime.now());
+        domain.setValid(Boolean.TRUE);
         domain = domainRepository.save(domain);
 
         String key = cacheKey(sld, tld);
