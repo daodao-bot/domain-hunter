@@ -97,7 +97,17 @@ docker run -d \
 
 OpenAPI 接口文档地址： /doc.html
 
-数据查询参考 sql
+域名搜索 curl 命令示例：
+
+```shell
+curl -i \
+  -X POST \
+  -H content-type:application/json \
+  -d '{"param":{"tld":"com","bit":1}}' \
+  http://localhost/api/domain-hunter
+```
+
+数据查询参考 sql 语句示例：
 
 ```mysql
 SELECT *
