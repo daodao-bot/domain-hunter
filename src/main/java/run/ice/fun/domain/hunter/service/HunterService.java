@@ -59,16 +59,16 @@ public class HunterService {
         }
         switch (bit) {
             case 1:
-                bit1(tld);
+                Thread.ofVirtual().start(() -> bit1(tld));
                 break;
             case 2:
-                bit2(tld);
+                Thread.ofVirtual().start(() -> bit2(tld));
                 break;
             case 3:
-                bit3(tld);
+                Thread.ofVirtual().start(() -> bit3(tld));
                 break;
             case 4:
-                bit4(tld);
+                Thread.ofVirtual().start(() -> bit4(tld));
                 break;
             default:
                 throw new AppException(HunterError.BIT_ERROR, String.valueOf(bit));
@@ -147,7 +147,6 @@ public class HunterService {
                 return;
             }
         }
-        // Thread.ofVirtual().start(() -> doCheck(sld, tld));
         messageProducer.domainHunter(sld + "." + tld);
     }
 
