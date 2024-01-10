@@ -191,7 +191,7 @@ public class HunterService {
             return;
         }
         Integer avail = (Integer) domainDetail.get("avail");
-        if (avail == 1) {
+        if (avail == 1) { // 可用
             ArrayList<LinkedHashMap<String, ?>> priceList = (ArrayList<LinkedHashMap<String, ?>>) module.get("priceList");
             Optional<LinkedHashMap<String, ?>> o = priceList.stream()
                     .filter(price -> price.get("period").equals(12) && price.get("action").equals("activate"))
@@ -207,18 +207,23 @@ public class HunterService {
             } else {
                 log.error("{}.{} check error : {}", sld, tld, resultMap);
             }
-        } else {
+        } else { // 不可用
             LinkedHashMap<String, ?> saleDetail = (LinkedHashMap<String, ?>) module.get("saleDetail");
             if (null == saleDetail) {
                 domain.setAvail(Boolean.FALSE);
             } else {
-                String price = (String) saleDetail.get("price");
-                if (null == price) {
+                Integer productType = (Integer) saleDetail.get("productType");
+                if (null == productType || productType != 2) { // 2 一口价
                     domain.setAvail(Boolean.FALSE);
                 } else {
-                    Long money = Long.valueOf(price.replaceAll(",", ""));
-                    domain.setAvail(Boolean.TRUE);
-                    domain.setPrice(money);
+                    String price = (String) saleDetail.get("price");
+                    if (null == price) {
+                        domain.setAvail(Boolean.FALSE);
+                    } else {
+                        Long money = Long.valueOf(price.replaceAll(",", ""));
+                        domain.setAvail(Boolean.TRUE);
+                        domain.setPrice(money);
+                    }
                 }
             }
             domain.setValid(Boolean.TRUE);
