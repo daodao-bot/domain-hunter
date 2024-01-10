@@ -192,6 +192,7 @@ public class HunterService {
         }
         Integer avail = (Integer) domainDetail.get("avail");
         if (avail == 1) { // 可用
+            domain.setAvail(Boolean.TRUE);
             ArrayList<LinkedHashMap<String, ?>> priceList = (ArrayList<LinkedHashMap<String, ?>>) module.get("priceList");
             Optional<LinkedHashMap<String, ?>> o = priceList.stream()
                     .filter(price -> price.get("period").equals(12) && price.get("action").equals("activate"))
@@ -199,37 +200,30 @@ public class HunterService {
             if (o.isPresent()) {
                 LinkedHashMap<String, ?> price = o.get();
                 Long money = (Long) price.get("money");
-                domain.setAvail(Boolean.TRUE);
                 domain.setPrice(money);
                 domain.setValid(Boolean.TRUE);
-                domain.setUpdateTime(LocalDateTime.now());
-                domain = domainRepository.save(domain);
             } else {
                 log.error("{}.{} check error : {}", sld, tld, resultMap);
+                domain.setValid(Boolean.FALSE);
             }
         } else { // 不可用
+            domain.setAvail(Boolean.FALSE);
             LinkedHashMap<String, ?> saleDetail = (LinkedHashMap<String, ?>) module.get("saleDetail");
-            if (null == saleDetail) {
-                domain.setAvail(Boolean.FALSE);
-            } else {
+            if (null != saleDetail) {
+                domain.setValid(Boolean.TRUE);
                 Integer productType = (Integer) saleDetail.get("productType");
-                if (null == productType || productType != 2) { // 2 一口价
-                    domain.setAvail(Boolean.FALSE);
-                } else {
-                    String price = (String) saleDetail.get("price");
-                    if (null == price) {
-                        domain.setAvail(Boolean.FALSE);
-                    } else {
-                        Long money = Long.valueOf(price.replaceAll(",", ""));
-                        domain.setAvail(Boolean.TRUE);
-                        domain.setPrice(money);
-                    }
+                String price = (String) saleDetail.get("price");
+                if (null != productType && productType == 2 && null != price && !price.isEmpty()) { // 2 一口价
+                    Long money = Long.valueOf(price.replaceAll(",", ""));
+                    domain.setPrice(money);
                 }
+            } else {
+                log.error("{}.{} check error : {}", sld, tld, resultMap);
+                domain.setValid(Boolean.FALSE);
             }
-            domain.setValid(Boolean.TRUE);
-            domain.setUpdateTime(LocalDateTime.now());
-            domain = domainRepository.save(domain);
         }
+        domain.setUpdateTime(LocalDateTime.now());
+        domain = domainRepository.save(domain);
 
         String key = cacheKey(sld, tld);
         redisTemplate.opsForValue().set(key, domain, Duration.ofDays(30L));
