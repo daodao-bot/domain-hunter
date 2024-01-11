@@ -25,5 +25,14 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml -DskipTests
 
+    - name: Login Docker Hub
+      env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      run: docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag daodaobot/domain-hunter:latest
+
+    - name: Push Docker Image
+      run: docker push daodaobot/domain-hunter:latest
