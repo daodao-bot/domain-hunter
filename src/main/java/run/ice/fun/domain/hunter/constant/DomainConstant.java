@@ -11,10 +11,11 @@ public class DomainConstant {
 
     public static final String[] TLDS = {
             "com",
+            "net",
             "cn",
+            "org",
             "top",
             "ltd",
-            "net",
             "club",
             "xyz",
             "ren",
