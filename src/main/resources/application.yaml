@@ -1,9 +1,9 @@
 server:
-  port: 80
+  port: ${SERVER_PORT:80}
 
 spring:
   application:
-    name: domain-hunter
+    name: ${APP_NAME:domain-hunter}
 
   threads:
     virtual:
@@ -17,7 +17,7 @@ spring:
 
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/domain_hunter?Unicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/domain_hunter
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -28,12 +28,12 @@ spring:
       port: ${REDIS_PORT:6379}
       username: ${REDIS_USERNAME:}
       password: ${REDIS_PASSWORD:}
-      database: ${REDIS_DATABASE:1}
+      database: ${REDIS_DATABASE:0}
 
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
-    virtual-host: ${RABBITMQ_VIRTUAL_HOST:domain-hunter}
+    virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
     username: ${RABBITMQ_USERNAME:guest}
     password: ${RABBITMQ_PASSWORD:guest}
 
@@ -42,20 +42,12 @@ logging:
     root: info
     web: info
     sql: debug
-    org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
 
 springdoc:
   group-configs:
     - group: default
       paths-to-match: /api/**
-
-knife4j:
-  enable: true
-  documents:
-    - group: default
-      name: README
-      locations: classpath:static/doc/*
 
 app:
   check-api: https://checkapi.aliyun.com/check/domaincheck

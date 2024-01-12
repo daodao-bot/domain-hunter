@@ -193,16 +193,22 @@ public class HunterService {
         Integer avail = (Integer) domainDetail.get("avail");
         if (avail == 1) { // 可用
             domain.setAvail(Boolean.TRUE);
-            ArrayList<LinkedHashMap<String, ?>> priceList = (ArrayList<LinkedHashMap<String, ?>>) module.get("priceList");
-            Optional<LinkedHashMap<String, ?>> o = priceList.stream()
-                    .filter(price -> price.get("period").equals(12) && price.get("action").equals("activate"))
-                    .findFirst();
-            if (o.isPresent()) {
-                LinkedHashMap<String, ?> price = o.get();
-                Long money = (Long) price.get("money");
-                domain.setPrice(money);
+            Object domainPrice = domainDetail.get("price");
+            if (null != domainPrice) {
+                Long price = price(domainPrice);
+                domain.setPrice(price);
             } else {
-                log.error("{}.{} check error : {}", sld, tld, resultMap);
+                ArrayList<LinkedHashMap<String, ?>> priceList = (ArrayList<LinkedHashMap<String, ?>>) module.get("priceList");
+                Optional<LinkedHashMap<String, ?>> o = priceList.stream()
+                        .filter(price -> price.get("period").equals(12) && price.get("action").equals("activate"))
+                        .findFirst();
+                if (o.isPresent()) {
+                    LinkedHashMap<String, ?> price = o.get();
+                    Long money = price(price.get("money"));
+                    domain.setPrice(money);
+                } else {
+                    log.error("{}.{} check error : {}", sld, tld, resultMap);
+                }
             }
         } else { // 不可用
             domain.setAvail(Boolean.FALSE);
@@ -211,7 +217,7 @@ public class HunterService {
                 Integer productType = (Integer) saleDetail.get("productType");
                 String price = (String) saleDetail.get("price");
                 if (null != productType && productType == 2 && null != price && !price.isEmpty()) { // 2 一口价
-                    Long money = Long.valueOf(price.replaceAll(",", ""));
+                    Long money = price(price);
                     domain.setPrice(money);
                 }
             }
@@ -268,6 +274,16 @@ public class HunterService {
 
     private String cacheKey(String sld, String tld) {
         return String.format("domain:%s.%s", sld, tld);
+    }
+
+    private Long price(Object o) {
+        if (o instanceof Number n) {
+            return n.longValue();
+        } else if (o instanceof String s) {
+            return Long.valueOf(s.replaceAll(",", ""));
+        } else {
+            return null;
+        }
     }
 
 }

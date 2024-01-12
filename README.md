@@ -32,7 +32,7 @@ docker run -d \
 
 初始化数据库
 
-参考 src/main/resources/static/doc/mysql.sql
+参考 src/main/resources/sql/init.sql
 
 ---
 
@@ -61,8 +61,6 @@ docker run -d \
   rabbitmq:management
 ```
 
-创建 virtual-host = domain-hunter
-
 ---
 
 ### application
@@ -82,10 +80,10 @@ docker run -d \
   -e REDIS_PORT=localhost \
   -e REDIS_USERNAME= \
   -e REDIS_PASSWORD= \
-  -e REDIS_DATABASE=1 \
+  -e REDIS_DATABASE=0 \
   -e RABBITMQ_HOST=localhost \
   -e RABBITMQ_PORT=5672 \
-  -e RABBITMQ_VIRTUAL_HOST=domain-hunter \
+  -e RABBITMQ_VIRTUAL_HOST=/ \
   -e RABBITMQ_USERNAME=guest \
   -e RABBITMQ_PASSWORD=guest \
   daodaobot/domain-hunter:latest
