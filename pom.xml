@@ -12,7 +12,7 @@
 
     <groupId>run.ice.fun</groupId>
     <artifactId>domain-hunter</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>domain-hunter</name>
     <description>domain-hunter</description>
 
