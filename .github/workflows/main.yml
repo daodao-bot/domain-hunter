@@ -43,7 +43,6 @@ jobs:
           TZ: Asia/Shanghai
 
     steps:
-      - uses: actions/checkout@v4
 
       - name: Wait for MySQL to be ready
         run: |
@@ -51,6 +50,9 @@ jobs:
             echo "Waiting for MySQL to be ready..."
             sleep 1
           done
+
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Init MySQL
         run: docker exec -i $(docker ps -q --filter "name=mysql") mysql -h 127.0.0.1 -uroot -proot < src/main/resources/sql/init.sql
