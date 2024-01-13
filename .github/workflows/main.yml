@@ -43,13 +43,13 @@ jobs:
           TZ: Asia/Shanghai
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Init MySQL
-        run: mysql -uroot -proot < src/main/resources/sql/init.sql
+        run: mysql -h 127.0.0.1 -u root -p root < src/main/resources/sql/init.sql
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
